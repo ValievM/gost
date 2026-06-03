@@ -64,8 +64,17 @@
     "exceljs": "^4.4.0",
     "node-plantuml": "^0.9.0"
   },
+  "peerDependencies": {
+    "googleapis": ">=140"
+  },
+  "peerDependenciesMeta": {
+    "googleapis": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "googleapis": "^173.0.0",
     "jest": "^30.4.2",
     "ts-jest": "^29.4.11",
     "typescript": "^5.4.0"
