@@ -104,12 +104,12 @@ export async function diagramBlockImpl(
   opts: DiagramBlockOpts = {}
 ): Promise<Paragraph[]> {
   const dpi = opts.dpi ?? 150;
-  // maxWidth должен соответствовать dpi: при 150 DPI контент = 974px, при 96 DPI = 624px.
-  // Формула: contentWidthInches × dpi = (CONTENT_WIDTH / 1440) × dpi
-  const maxWidth = opts.maxWidth ?? Math.round((st.CONTENT_WIDTH / 1440) * dpi);
+  // ImageRun использует 96 display px на дюйм. DPI отвечает только за
+  // разрешение исходного PNG и не должен увеличивать физический размер в Word.
+  const maxWidth = opts.maxWidth ?? Math.round((st.CONTENT_WIDTH / 1440) * 96);
   const renderOpts: RenderDiagramOpts & SkinparamOpts = { dpi, skinparams: opts.skinparams };
   const png = await renderDiagram(pumlSource, renderOpts);
-  const { width, height } = autoImageSize(png, maxWidth);
+  const { width, height } = autoImageSize(png, maxWidth, dpi, opts.fit ?? "natural");
   if (height > 900) {
     console.warn(`[WARN] Диаграмма "${captionText}" высотой ${height}px — может не влезть на страницу`);
   }

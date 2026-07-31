@@ -40,8 +40,27 @@ exports.DEFAULT_DOCX_STYLE = {
         { type: docx_1.TabStopType.RIGHT, position: 9355 },
     ],
 };
+function cloneBorder(border) {
+    return { ...border };
+}
+function cloneBorders(borders) {
+    return {
+        top: cloneBorder(borders.top),
+        bottom: cloneBorder(borders.bottom),
+        left: cloneBorder(borders.left),
+        right: cloneBorder(borders.right),
+    };
+}
 function createDocxStyle(opts = {}) {
-    const borderSingle = opts.BORDER_SINGLE ?? exports.DEFAULT_DOCX_STYLE.BORDER_SINGLE;
+    const borderSingle = cloneBorder(opts.BORDER_SINGLE ?? exports.DEFAULT_DOCX_STYLE.BORDER_SINGLE);
+    const bordersAll = opts.BORDERS_ALL
+        ? cloneBorders(opts.BORDERS_ALL)
+        : {
+            top: cloneBorder(borderSingle),
+            bottom: cloneBorder(borderSingle),
+            left: cloneBorder(borderSingle),
+            right: cloneBorder(borderSingle),
+        };
     return {
         ...exports.DEFAULT_DOCX_STYLE,
         ...opts,
@@ -54,18 +73,18 @@ function createDocxStyle(opts = {}) {
         LINE: opts.line ?? opts.LINE ?? exports.DEFAULT_DOCX_STYLE.LINE,
         CONTENT_WIDTH: opts.contentWidth ?? opts.CONTENT_WIDTH ?? exports.DEFAULT_DOCX_STYLE.CONTENT_WIDTH,
         CODE_FONT: opts.codeFont ?? opts.CODE_FONT ?? exports.DEFAULT_DOCX_STYLE.CODE_FONT,
+        TABLE_CELL_MARGINS: {
+            ...exports.DEFAULT_DOCX_STYLE.TABLE_CELL_MARGINS,
+            ...(opts.TABLE_CELL_MARGINS ?? {}),
+        },
         PAGE: {
             size: { ...exports.DEFAULT_DOCX_STYLE.PAGE.size, ...(opts.page?.size ?? opts.PAGE?.size ?? {}) },
             margin: { ...exports.DEFAULT_DOCX_STYLE.PAGE.margin, ...(opts.page?.margin ?? opts.PAGE?.margin ?? {}) },
         },
         BORDER_SINGLE: borderSingle,
-        BORDERS_ALL: opts.BORDERS_ALL ?? {
-            top: borderSingle,
-            bottom: borderSingle,
-            left: borderSingle,
-            right: borderSingle,
-        },
-        TITLE_TAB_STOPS: opts.TITLE_TAB_STOPS ?? exports.DEFAULT_DOCX_STYLE.TITLE_TAB_STOPS,
+        BORDERS_ALL: bordersAll,
+        TITLE_TAB_STOPS: (opts.TITLE_TAB_STOPS ?? exports.DEFAULT_DOCX_STYLE.TITLE_TAB_STOPS)
+            .map((stop) => ({ ...stop })),
     };
 }
 //# sourceMappingURL=style.js.map

@@ -10,6 +10,7 @@ import {
   Math as DocxMath,
 } from "docx";
 import type { LintIssue } from "../lint";
+import type { ImageFit } from "../plantuml-size";
 
 export type DocxBorder = { style: (typeof BorderStyle)[keyof typeof BorderStyle]; size: number; color: string };
 export type DocxBorders = { top: DocxBorder; bottom: DocxBorder; left: DocxBorder; right: DocxBorder };
@@ -50,19 +51,28 @@ export interface DocxStyleConfig {
   TITLE_TAB_STOPS: TabStop[];
 }
 
+export type DocxPageOverrides = {
+  size?: Partial<DocxStyleConfig["PAGE"]["size"]>;
+  margin?: Partial<DocxStyleConfig["PAGE"]["margin"]>;
+};
+
+export type DocxStyleOverrides = Partial<Omit<DocxStyleConfig, "PAGE" | "TABLE_CELL_MARGINS">> & {
+  PAGE?: DocxPageOverrides;
+  TABLE_CELL_MARGINS?: Partial<DocxStyleConfig["TABLE_CELL_MARGINS"]>;
+  font?: string;
+  size?: number;
+  sizeTitle?: number;
+  sizeHeader?: number;
+  sizeCode?: number;
+  indent?: number;
+  line?: number;
+  contentWidth?: number;
+  codeFont?: string;
+  page?: DocxPageOverrides;
+};
+
 export interface DocxGostOptions {
-  style?: Partial<DocxStyleConfig> & {
-    font?: string;
-    size?: number;
-    sizeTitle?: number;
-    sizeHeader?: number;
-    sizeCode?: number;
-    indent?: number;
-    line?: number;
-    contentWidth?: number;
-    codeFont?: string;
-    page?: Partial<DocxStyleConfig["PAGE"]>;
-  };
+  style?: DocxStyleOverrides;
 }
 
 export interface RunDescriptor {
@@ -210,9 +220,19 @@ export interface ImageBlockOpts extends ParagraphOpts {
   /**
    * Максимальная ширина изображения в px при авто-определении размеров.
    * Применяется только когда width/height не переданы явно.
-   * По умолчанию: 624 (ширина контента ГОСТ A4 при 150 DPI).
+   * По умолчанию вычисляется из CONTENT_WIDTH (624 display px для стандартного стиля).
    */
   maxWidth?: number;
+  /**
+   * natural: не увеличивать маленькое изображение, большое ограничить maxWidth.
+   * content: всегда отображать на maxWidth. По умолчанию: natural.
+   */
+  fit?: ImageFit;
+  /**
+   * DPI исходного PNG для расчёта естественного физического размера.
+   * По умолчанию: 96.
+   */
+  sourceDpi?: number;
 }
 
 /** Тип списка: нумерованный или маркированный (тире по ГОСТ) */
@@ -222,11 +242,15 @@ export interface DiagramBlockOpts {
   /** DPI растеризации. По умолчанию: 150, для печати: 300 */
   dpi?: number;
   /**
-   * Максимальная ширина изображения в px.
-   * По умолчанию вычисляется как contentWidth × dpi: при 150 DPI = 974px, при 300 DPI = 1949px.
-   * Переопредели только если нужен нестандартный размер.
+   * Максимальная отображаемая ширина в DOCX display px (96 px = 1 inch).
+   * По умолчанию вычисляется из CONTENT_WIDTH (624 px для стандартного стиля).
    */
   maxWidth?: number;
+  /**
+   * natural: сохранить естественный физический размер и только ограничить сверху.
+   * content: растянуть до maxWidth. По умолчанию: natural.
+   */
+  fit?: ImageFit;
   /** Переопределение skinparam */
   skinparams?: Record<string, string>;
 }

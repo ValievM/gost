@@ -1,5 +1,6 @@
 import { renderDiagram, RenderDiagramOpts, SkinparamOpts } from "./plantuml-render";
 import { autoImageSize } from "./plantuml-size";
+import type { ImageFit } from "./plantuml-size";
 
 // ── Типы ──────────────────────────────────────────────────────────────────────
 
@@ -28,8 +29,13 @@ export interface PlantUmlGostInstance {
   ganttChart():        GanttBuilder;
   /** Рендерит puml-строку, возвращает PNG Buffer */
   render(puml: string, opts?: RenderDiagramOpts & SkinparamOpts): Promise<Buffer>;
-  /** Авторазмер PNG под ширину контента */
-  autoImageSize(buffer: Buffer, maxWidth?: number): { width: number; height: number };
+  /** Размер PNG для DOCX; sourceDpi по умолчанию равен DPI экземпляра */
+  autoImageSize(
+    buffer: Buffer,
+    maxWidth?: number,
+    sourceDpi?: number,
+    fit?: ImageFit,
+  ): { width: number; height: number };
 }
 
 // ── Базовый строитель ─────────────────────────────────────────────────────────
@@ -597,8 +603,8 @@ export function createPlantUmlGost(opts: PlantUmlGostOptions = {}): PlantUmlGost
     render: (puml, renderOpts = {}) =>
       renderDiagram(puml, { dpi: defaultDpi, ...renderOpts }),
 
-    autoImageSize: (buffer, maxWidth) =>
-      autoImageSize(buffer, maxWidth),
+    autoImageSize: (buffer, maxWidth, sourceDpi = defaultDpi, fit = "natural") =>
+      autoImageSize(buffer, maxWidth, sourceDpi, fit),
   };
 }
 

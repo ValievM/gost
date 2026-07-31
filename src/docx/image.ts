@@ -28,7 +28,13 @@ export function imageBlockImpl(
         "Передай width и height явно для JPG/BMP/GIF."
       );
     }
-    const sized = autoImageSize(data, effectiveOpts.maxWidth ?? 624);
+    const maxWidth = effectiveOpts.maxWidth ?? Math.round((st.CONTENT_WIDTH / 1440) * 96);
+    const sized = autoImageSize(
+      data,
+      maxWidth,
+      effectiveOpts.sourceDpi ?? 96,
+      effectiveOpts.fit ?? "natural",
+    );
     w = sized.width;
     h = sized.height;
   }

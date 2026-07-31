@@ -1,4 +1,5 @@
-import { createDocxGost } from "../docx-gost";
+import { createDocxGost, createDocxStyle, DEFAULT_DOCX_STYLE } from "../docx-gost";
+import * as docxGostModule from "../docx-gost";
 import { Paragraph } from "docx";
 import * as fs from "fs";
 import * as path from "path";
@@ -17,6 +18,14 @@ describe("createDocxGost", () => {
       "makeDocument", "saveDocument", "diagramBlock", "codeFile", "list", "appendix",
     ];
     methods.forEach((m) => expect(typeof (g as unknown as Record<string, unknown>)[m]).toBe("function"));
+  });
+
+  test("публичный entrypoint не экспортирует внутренние реализации", () => {
+    const exported = docxGostModule as unknown as Record<string, unknown>;
+    expect(exported.isMathLike).toBeUndefined();
+    expect(exported.paragraphWithMathImpl).toBeUndefined();
+    expect(exported.formulaMathImpl).toBeUndefined();
+    expect(exported.formulaInlineImpl).toBeUndefined();
   });
 
   test("paragraph() возвращает Paragraph", () => {
@@ -40,6 +49,32 @@ describe("createDocxGost", () => {
     expect(Array.isArray(result)).toBe(true);
     expect(result).toHaveLength(3);
     result.forEach((p) => expect(p).toBeInstanceOf(Paragraph));
+  });
+
+  describe("изоляция стилей", () => {
+    test("экземпляры не разделяют вложенные объекты конфигурации", () => {
+      const first = createDocxGost();
+      const second = createDocxGost();
+
+      first.style.TABLE_CELL_MARGINS.top = 999;
+      first.style.PAGE.margin.left = 999;
+      first.style.BORDER_SINGLE.color = "FF0000";
+      first.style.BORDERS_ALL.top.color = "00FF00";
+      first.style.TITLE_TAB_STOPS[0].position = 999;
+
+      expect(second.style.TABLE_CELL_MARGINS.top).toBe(DEFAULT_DOCX_STYLE.TABLE_CELL_MARGINS.top);
+      expect(second.style.PAGE.margin.left).toBe(DEFAULT_DOCX_STYLE.PAGE.margin.left);
+      expect(second.style.BORDER_SINGLE.color).toBe(DEFAULT_DOCX_STYLE.BORDER_SINGLE.color);
+      expect(second.style.BORDERS_ALL.top.color).toBe(DEFAULT_DOCX_STYLE.BORDERS_ALL.top.color);
+      expect(second.style.TITLE_TAB_STOPS[0].position).toBe(DEFAULT_DOCX_STYLE.TITLE_TAB_STOPS[0].position);
+    });
+
+    test("частичные page overrides сохраняют остальные значения", () => {
+      const style = createDocxStyle({ page: { margin: { left: 2000 } } });
+      expect(style.PAGE.margin.left).toBe(2000);
+      expect(style.PAGE.margin.right).toBe(DEFAULT_DOCX_STYLE.PAGE.margin.right);
+      expect(style.PAGE.size).toEqual(DEFAULT_DOCX_STYLE.PAGE.size);
+    });
   });
 
   describe("createCaptionCounter", () => {
@@ -75,6 +110,7 @@ describe("createDocxGost", () => {
     // PNG magic bytes: \x89PNG\r\n\x1a\n
     b[0] = 0x89; b[1] = 0x50; b[2] = 0x4e; b[3] = 0x47;
     b[4] = 0x0d; b[5] = 0x0a; b[6] = 0x1a; b[7] = 0x0a;
+    b.write("IHDR", 12, "ascii");
     b.writeUInt32BE(800, 16);
     b.writeUInt32BE(600, 20);
     return b;
@@ -189,6 +225,30 @@ describe("createDocxGost", () => {
           ["Значение 1", "Значение 2"],
         ])
       ).not.toThrow();
+    });
+
+    test("применяет стили CellDescriptor к array-content", () => {
+      const table = g.makeTable(
+        [[{ text: ["Styled"], color: "FF0000", font: "Arial", size: 20, bold: true }]],
+        { headerRow: -1 },
+      );
+      const serialized = JSON.stringify(table);
+      expect(serialized).toContain("FF0000");
+      expect(serialized).toContain("Arial");
+    });
+
+    test("учитывает colspan при расчёте ширины ячейки", () => {
+      const table = g.makeTable(
+        [[{ text: "Объединено", colspan: 2 }, "Остаток"]],
+        { widths: [3000, 2000, 4355], headerRow: -1 },
+      );
+      expect(JSON.stringify(table)).toContain("5000");
+    });
+
+    test("отклоняет пустые таблицы и некорректную геометрию", () => {
+      expect(() => g.makeTable([])).toThrow(/must not be empty/);
+      expect(() => g.makeTable([["A", "B"]], { widths: [9355] })).toThrow(/2 values/);
+      expect(() => g.makeTable([[{ text: "A", colspan: 0 }]])).toThrow(/colspan/);
     });
   });
 

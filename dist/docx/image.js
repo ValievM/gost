@@ -24,7 +24,8 @@ function imageBlockImpl(st, src, widthOrOpts, height, opts = {}) {
             throw new Error("imageBlock(): авто-определение размеров поддерживает только PNG. " +
                 "Передай width и height явно для JPG/BMP/GIF.");
         }
-        const sized = (0, plantuml_size_1.autoImageSize)(data, effectiveOpts.maxWidth ?? 624);
+        const maxWidth = effectiveOpts.maxWidth ?? Math.round((st.CONTENT_WIDTH / 1440) * 96);
+        const sized = (0, plantuml_size_1.autoImageSize)(data, maxWidth, effectiveOpts.sourceDpi ?? 96, effectiveOpts.fit ?? "natural");
         w = sized.width;
         h = sized.height;
     }

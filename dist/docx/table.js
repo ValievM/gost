@@ -14,12 +14,32 @@ function normalizeCell(cell) {
     return { text: cell };
 }
 function tableColumnWidths(st, count, widths) {
-    if (Array.isArray(widths) && widths.length > 0)
-        return widths;
+    if (!Number.isInteger(count) || count <= 0) {
+        throw new Error("makeTable(): table must contain at least one logical column.");
+    }
+    if (Array.isArray(widths) && widths.length > 0) {
+        if (widths.length !== count) {
+            throw new Error(`makeTable(): widths must contain ${count} values, received ${widths.length}.`);
+        }
+        if (widths.some((width) => !Number.isFinite(width) || width <= 0)) {
+            throw new Error("makeTable(): every column width must be a positive number.");
+        }
+        return [...widths];
+    }
     const base = Math.floor(st.CONTENT_WIDTH / count);
     const result = Array(count).fill(base);
     result[result.length - 1] += st.CONTENT_WIDTH - result.reduce((sum, width) => sum + width, 0);
     return result;
+}
+function cellColumnSpan(cell) {
+    const span = normalizeCell(cell).colspan ?? 1;
+    if (!Number.isInteger(span) || span <= 0) {
+        throw new Error("makeTable(): colspan must be a positive integer.");
+    }
+    return span;
+}
+function rowColumnCount(row) {
+    return row.reduce((count, cell) => count + cellColumnSpan(cell), 0);
 }
 function tableCellImpl(st, cell, width, opts) {
     const normalized = normalizeCell(cell);
@@ -31,7 +51,11 @@ function tableCellImpl(st, cell, width, opts) {
                 align,
                 noIndent: true,
                 line: opts.cellLine ?? st.TABLE_CELL_LINE,
-                size: opts.fontSize,
+                size: normalized.size ?? opts.fontSize,
+                bold,
+                italics: normalized.italics,
+                color: normalized.color,
+                font: normalized.font,
             })]
         : [new docx_1.Paragraph({
                 alignment: align,
@@ -56,7 +80,10 @@ function tableCellImpl(st, cell, width, opts) {
     });
 }
 function makeTableImpl(st, rows, opts = {}) {
-    const count = rows.reduce((max, row) => Math.max(max, row.length), 0);
+    if (rows.length === 0 || rows.some((row) => row.length === 0)) {
+        throw new Error("makeTable(): rows and cells must not be empty.");
+    }
+    const count = rows.reduce((max, row) => Math.max(max, rowColumnCount(row)), 0);
     const effectiveStyle = opts.contentWidth ? { ...st, CONTENT_WIDTH: opts.contentWidth } : st;
     const widths = tableColumnWidths(effectiveStyle, count, opts.widths);
     const headerRow = opts.headerRow ?? 0;
@@ -67,14 +94,22 @@ function makeTableImpl(st, rows, opts = {}) {
         columnWidths: widths,
         rows: rows.map((row, rowIndex) => {
             const isHeader = rowIndex === headerRow;
+            let columnIndex = 0;
             return new docx_1.TableRow({
-                children: row.map((cell, cellIndex) => tableCellImpl(st, cell, widths[cellIndex], {
-                    ...opts,
-                    align: isHeader && centerHeader ? docx_1.AlignmentType.CENTER : defaultAlign,
-                    bold: isHeader,
-                    fontSize: opts.fontSize ?? st.SIZE,
-                    borders: opts.borders ?? st.BORDERS_ALL,
-                })),
+                children: row.map((cell) => {
+                    const span = cellColumnSpan(cell);
+                    const width = widths
+                        .slice(columnIndex, columnIndex + span)
+                        .reduce((sum, value) => sum + value, 0);
+                    columnIndex += span;
+                    return tableCellImpl(st, cell, width, {
+                        ...opts,
+                        align: isHeader && centerHeader ? docx_1.AlignmentType.CENTER : defaultAlign,
+                        bold: isHeader,
+                        fontSize: opts.fontSize ?? st.SIZE,
+                        borders: opts.borders ?? st.BORDERS_ALL,
+                    });
+                }),
             });
         }),
     });

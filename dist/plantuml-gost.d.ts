@@ -1,4 +1,5 @@
 import { RenderDiagramOpts, SkinparamOpts } from "./plantuml-render";
+import type { ImageFit } from "./plantuml-size";
 export interface DiagramBuildOpts {
     /** Дополнительные skinparam поверх стандартных */
     skinparams?: Record<string, string>;
@@ -22,8 +23,8 @@ export interface PlantUmlGostInstance {
     ganttChart(): GanttBuilder;
     /** Рендерит puml-строку, возвращает PNG Buffer */
     render(puml: string, opts?: RenderDiagramOpts & SkinparamOpts): Promise<Buffer>;
-    /** Авторазмер PNG под ширину контента */
-    autoImageSize(buffer: Buffer, maxWidth?: number): {
+    /** Размер PNG для DOCX; sourceDpi по умолчанию равен DPI экземпляра */
+    autoImageSize(buffer: Buffer, maxWidth?: number, sourceDpi?: number, fit?: ImageFit): {
         width: number;
         height: number;
     };

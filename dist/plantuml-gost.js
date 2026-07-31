@@ -485,7 +485,7 @@ function createPlantUmlGost(opts = {}) {
         mindMap: () => new MindMapBuilder(),
         ganttChart: () => new GanttBuilder(),
         render: (puml, renderOpts = {}) => (0, plantuml_render_1.renderDiagram)(puml, { dpi: defaultDpi, ...renderOpts }),
-        autoImageSize: (buffer, maxWidth) => (0, plantuml_size_1.autoImageSize)(buffer, maxWidth),
+        autoImageSize: (buffer, maxWidth, sourceDpi = defaultDpi, fit = "natural") => (0, plantuml_size_1.autoImageSize)(buffer, maxWidth, sourceDpi, fit),
     };
 }
 var plantuml_size_2 = require("./plantuml-size");
