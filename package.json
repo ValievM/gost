@@ -62,13 +62,7 @@
     "examples/plantuml/render-all.mjs",
     "scripts/check-api-docs.mjs",
     "scripts/check-docs.mjs",
-    "AGENTS.md",
-    "CLAUDE.md",
     "README.md",
-    "CHANGELOG.md",
-    "CONTRIBUTING.md",
-    "RELEASING.md",
-    "SECURITY.md",
     "LICENSE"
   ],
   "engines": {

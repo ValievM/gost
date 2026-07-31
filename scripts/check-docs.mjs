@@ -8,11 +8,6 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const markdownFiles = [
   "README.md",
   "AGENTS.md",
-  "CLAUDE.md",
-  "CHANGELOG.md",
-  "CONTRIBUTING.md",
-  "RELEASING.md",
-  "SECURITY.md",
 ]
   .map((name) => path.join(ROOT, name))
   .filter(fs.existsSync);

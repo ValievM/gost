@@ -13,7 +13,8 @@ const contracts = [
     name: "DOCX",
     source: "src/docx/types.ts",
     interfaceName: "DocxGostInstance",
-    docs: "docs/docx/api.md",
+    docs: "README.md",
+    marker: "docx-api-methods",
     entrypoint: "dist/docx-gost.js",
     factory: "createDocxGost",
   },
@@ -21,7 +22,8 @@ const contracts = [
     name: "PlantUML",
     source: "src/plantuml-gost.ts",
     interfaceName: "PlantUmlGostInstance",
-    docs: "docs/plantuml/api.md",
+    docs: "README.md",
+    marker: "plantuml-api-methods",
     entrypoint: "dist/plantuml-gost.js",
     factory: "createPlantUmlGost",
   },
@@ -30,6 +32,7 @@ const contracts = [
     source: "src/excel/types.ts",
     interfaceName: "ExcelGostInstance",
     docs: "docs/excel/api.md",
+    marker: "api-methods",
     entrypoint: "dist/excel-gost.js",
     factory: "createExcelGost",
   },
@@ -63,8 +66,8 @@ function interfaceMethods(contract) {
 
 function documentedMethods(contract) {
   const docs = read(contract.docs);
-  const startMarker = "<!-- api-methods:start -->";
-  const endMarker = "<!-- api-methods:end -->";
+  const startMarker = `<!-- ${contract.marker}:start -->`;
+  const endMarker = `<!-- ${contract.marker}:end -->`;
   const start = docs.indexOf(startMarker);
   const end = docs.indexOf(endMarker);
   if (start === -1 || end === -1 || end <= start) {

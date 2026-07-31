@@ -24,22 +24,10 @@ PlantUML-диаграммы. Текущий титульный шаблон не
   до ширины контента;
 - `makeTitlePage()` выводит ИТА ЮФУ и Таганрог.
 
-## Progressive disclosure
+## Документация
 
-Начинать с `README.md`, затем открывать только нужную ветку `docs/INDEX.md`.
-
-Для DOCX:
-
-- генерация готового отчёта — `docs/ai-report-generation.md`;
-- модель и маршрут — `docs/docx/README.md`;
-- сигнатуры — `docs/docx/api.md`;
-- текст, списки, код, приложения — `docs/docx/content.md`;
-- таблицы и формулы — `docs/docx/tables-and-math.md`;
-- изображения и PlantUML в DOCX — `docs/docx/images-and-diagrams.md`;
-- стили, титульник и сборка — `docs/docx/document-and-styles.md`;
-- lint — `docs/docx/lint.md`.
-
-Не загружать все документы без необходимости.
+Весь DOCX- и PlantUML-контракт, алгоритм генерации отчёта и ограничения
+находятся в `README.md`. Excel намеренно вынесен в `docs/excel/`.
 
 Для полного отчёта использовать `examples/docx/full-report.cjs` как
 канонический шаблон; `examples/docx/minimal.cjs` — только для быстрого старта.
@@ -63,8 +51,8 @@ PlantUML-диаграммы. Текущий титульный шаблон не
 - Не редактировать `dist/` вручную; синхронизировать через `npm run build`.
 - Все CommonJS-примеры с `await` оборачивать в `async function main()`.
 - Пример должен проходить `node --check`.
-- Новую публичную функцию одновременно добавить в типы, factory wiring, тесты и
-  тематический документ.
+- Новую публичную DOCX/PlantUML-функцию одновременно добавить в типы, factory
+  wiring, тесты и `README.md`. Excel-функцию — в `docs/excel/api.md`.
 - Не называть DOCX lint полной проверкой ГОСТ или реальной пагинации.
 
 ## Проверка
