@@ -1,5 +1,5 @@
 import { Paragraph, Table } from "docx";
-export type GostElementType = "pageBreak" | "blank" | "h1" | "h2" | "h3" | "paragraph" | "centered" | "caption" | "tableCaption" | "placeholder" | "image" | "codeLine" | "table" | "unknown";
+export type GostElementType = "pageBreak" | "blank" | "h1" | "h2" | "h3" | "paragraph" | "centered" | "caption" | "tableCaption" | "placeholder" | "image" | "codeLine" | "listItem" | "appendixHeading" | "table" | "unknown";
 export type LintLevel = "warn" | "info";
 export interface LintIssue {
     level: LintLevel;
