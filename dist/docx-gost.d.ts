@@ -166,9 +166,17 @@ export interface DocxGostInstance {
     tableCaption(text: string, opts?: ParagraphOpts): Paragraph;
     createCaptionCounter(prefix: string, opts?: CaptionCounterOpts): CaptionCounter;
     placeholder(label: string, opts?: ParagraphOpts): Paragraph;
-    imageBlock(imagePath: string | Buffer, width: number, height: number, opts?: ParagraphOpts): Paragraph;
+    /** Явные размеры: imageBlock(src, 600, 400) или imageBlock(src, 600, 400, opts) */
+    imageBlock(src: string | Buffer, width: number, height: number, opts?: ImageBlockOpts): Paragraph;
+    /** Авто-размер из PNG-байт: imageBlock(src) или imageBlock(src, { maxWidth: 500 }) */
+    imageBlock(src: string | Buffer, opts?: ImageBlockOpts): Paragraph;
     codeLine(text: string, opts?: ParagraphOpts): Paragraph;
     codeBlock(lines: string[], opts?: ParagraphOpts): Paragraph[];
+    /**
+     * Читает файл с диска, нормализует переводы строк и табы, возвращает массив
+     * Paragraph в стиле кода. Эквивалентно codeBlock(readFileSync(p).split('\n')).
+     */
+    codeFile(filePath: string, opts?: ParagraphOpts): Paragraph[];
     formulaMath(content: unknown, opts?: ParagraphOpts): Paragraph;
     formulaInline(label: string, mathContent: unknown, opts?: ParagraphOpts): Paragraph;
     makeTable(rows: CellValue[][], opts?: TableOpts): Table;
@@ -190,10 +198,22 @@ export interface DocxGostInstance {
      */
     lint(children: Array<Paragraph | Table>): LintIssue[];
 }
+export interface ImageBlockOpts extends ParagraphOpts {
+    /**
+     * Максимальная ширина изображения в px при авто-определении размеров.
+     * Применяется только когда width/height не переданы явно.
+     * По умолчанию: 624 (ширина контента ГОСТ A4 при 150 DPI).
+     */
+    maxWidth?: number;
+}
 export interface DiagramBlockOpts {
     /** DPI растеризации. По умолчанию: 150, для печати: 300 */
     dpi?: number;
-    /** Максимальная ширина px. По умолчанию: 624 (ГОСТ A4) */
+    /**
+     * Максимальная ширина изображения в px.
+     * По умолчанию вычисляется как contentWidth × dpi: при 150 DPI = 974px, при 300 DPI = 1949px.
+     * Переопредели только если нужен нестандартный размер.
+     */
     maxWidth?: number;
     /** Переопределение skinparam */
     skinparams?: Record<string, string>;

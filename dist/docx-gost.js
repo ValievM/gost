@@ -251,19 +251,46 @@ function placeholderImpl(st, label, opts = {}) {
         border: { top: border, bottom: border, left: border, right: border },
     }), "placeholder");
 }
-function imageBlockImpl(st, imagePath, width, height, opts = {}) {
-    const data = Buffer.isBuffer(imagePath) ? imagePath : fs_1.default.readFileSync(imagePath);
+function imageBlockImpl(st, src, widthOrOpts, height, opts = {}) {
+    const data = Buffer.isBuffer(src) ? src : fs_1.default.readFileSync(src);
+    let w, h, effectiveOpts;
+    if (typeof widthOrOpts === "number") {
+        // imageBlock(src, width, height, opts?)
+        w = widthOrOpts;
+        h = height;
+        effectiveOpts = opts;
+    }
+    else {
+        // imageBlock(src, opts?) — авто-размер из PNG-байт (PNG spec: bytes 16-19 width, 20-23 height)
+        effectiveOpts = widthOrOpts ?? {};
+        if (data.length < 24 || data.toString("ascii", 1, 4) !== "PNG") {
+            throw new Error("imageBlock(): авто-определение размеров поддерживает только PNG. " +
+                "Передай width и height явно для JPG/BMP/GIF.");
+        }
+        const sized = (0, plantuml_size_1.autoImageSize)(data, effectiveOpts.maxWidth ?? 624);
+        w = sized.width;
+        h = sized.height;
+    }
     return (0, lint_1.tagElement)(new docx_1.Paragraph({
-        alignment: opts.align || docx_1.AlignmentType.CENTER,
+        alignment: effectiveOpts.align || docx_1.AlignmentType.CENTER,
         spacing: {
-            line: opts.line ?? st.LINE,
-            before: opts.before ?? st.IMAGE_BEFORE,
-            after: opts.after ?? st.IMAGE_AFTER,
+            line: effectiveOpts.line ?? st.LINE,
+            before: effectiveOpts.before ?? st.IMAGE_BEFORE,
+            after: effectiveOpts.after ?? st.IMAGE_AFTER,
         },
-        keepNext: opts.keepNext !== undefined ? !!opts.keepNext : true,
-        keepLines: opts.keepLines !== undefined ? opts.keepLines : true,
-        children: [new docx_1.ImageRun({ data, type: opts.imageType ?? "png", transformation: { width, height } })],
+        keepNext: effectiveOpts.keepNext !== undefined ? !!effectiveOpts.keepNext : true,
+        keepLines: effectiveOpts.keepLines !== undefined ? effectiveOpts.keepLines : true,
+        children: [new docx_1.ImageRun({ data, type: effectiveOpts.imageType ?? "png", transformation: { width: w, height: h } })],
     }), "image");
+}
+function codeFileImpl(st, filePath, opts = {}) {
+    const content = fs_1.default.readFileSync(filePath, "utf8")
+        .replace(/\r\n/g, "\n") // Windows CRLF → LF
+        .replace(/\t/g, "  "); // табы → 2 пробела (читаемо в Courier New)
+    const lines = content.split("\n");
+    if (lines[lines.length - 1] === "")
+        lines.pop(); // файл заканчивается \n → убираем пустую строку
+    return lines.map((line) => codeLineImpl(st, line, opts));
 }
 function codeLineImpl(st, text, opts = {}) {
     return (0, lint_1.tagElement)(paragraphImpl(st, [{ text, font: opts.font ?? st.CODE_FONT, size: opts.size ?? st.SIZE_CODE }], {
@@ -505,7 +532,10 @@ function saveDocumentImpl(doc, outputPath) {
     return docx_1.Packer.toBuffer(doc).then((buffer) => fs_1.default.promises.writeFile(outputPath, buffer));
 }
 async function diagramBlockImpl(st, pumlSource, counter, captionText, opts = {}) {
-    const { dpi = 150, maxWidth = 624 } = opts;
+    const dpi = opts.dpi ?? 150;
+    // maxWidth должен соответствовать dpi: при 150 DPI контент = 974px, при 96 DPI = 624px.
+    // Формула: contentWidthInches × dpi = (CONTENT_WIDTH / 1440) × dpi
+    const maxWidth = opts.maxWidth ?? Math.round((st.CONTENT_WIDTH / 1440) * dpi);
     const renderOpts = { dpi, skinparams: opts.skinparams };
     const png = await (0, plantuml_render_1.renderDiagram)(pumlSource, renderOpts);
     const { width, height } = (0, plantuml_size_1.autoImageSize)(png, maxWidth);
@@ -534,9 +564,11 @@ function createDocxGost(factoryOpts = {}) {
         tableCaption: (text, opts = {}) => tableCaptionImpl(st, text, opts),
         createCaptionCounter: (prefix, opts = {}) => createCaptionCounterImpl(st, prefix, opts),
         placeholder: (label, opts = {}) => placeholderImpl(st, label, opts),
-        imageBlock: (src, w, h, opts = {}) => imageBlockImpl(st, src, w, h, opts),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        imageBlock: (src, wOrOpts, h, opts) => imageBlockImpl(st, src, wOrOpts, h, opts ?? {}),
         codeLine: (text, opts = {}) => codeLineImpl(st, text, opts),
         codeBlock: (lines, opts = {}) => lines.map((line) => codeLineImpl(st, line, opts)),
+        codeFile: (filePath, opts = {}) => codeFileImpl(st, filePath, opts),
         formulaMath: (content, opts = {}) => formulaMathImpl(st, content, opts),
         formulaInline: (label, math, opts = {}) => formulaInlineImpl(st, label, math, opts),
         makeTable: (rows, opts = {}) => makeTableImpl(st, rows, opts),

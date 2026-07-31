@@ -158,4 +158,279 @@ describe("StateBuilder", () => {
         expect(puml).toContain('state "На линии" as S1');
     });
 });
+// ── ActivityBuilder ────────────────────────────────────────────────────────────
+describe("ActivityBuilder", () => {
+    test("start/stop генерирует ключевые слова", () => {
+        const puml = new plantuml_gost_1.ActivityBuilder().start().stop().build();
+        expect(puml).toContain("start");
+        expect(puml).toContain("stop");
+    });
+    test("action() оборачивает в :...;", () => {
+        const puml = new plantuml_gost_1.ActivityBuilder().action("Обработать запрос").build();
+        expect(puml).toContain(":Обработать запрос;");
+    });
+    test("if() без else — генерирует if/endif", () => {
+        const puml = new plantuml_gost_1.ActivityBuilder()
+            .if("условие", (b) => b.action("да"))
+            .build();
+        expect(puml).toContain("if (условие?) then (yes)");
+        expect(puml).toContain(":да;");
+        expect(puml).toContain("endif");
+        expect(puml).not.toContain("else");
+    });
+    test("if() с else — генерирует if/else/endif", () => {
+        const puml = new plantuml_gost_1.ActivityBuilder()
+            .if("условие", (b) => b.action("да"), (b) => b.action("нет"))
+            .build();
+        expect(puml).toContain("else (no)");
+        expect(puml).toContain(":нет;");
+    });
+    test("while() генерирует while/endwhile", () => {
+        const puml = new plantuml_gost_1.ActivityBuilder()
+            .while("есть задачи", (b) => b.action("обработать"))
+            .build();
+        expect(puml).toContain("while (есть задачи?)");
+        expect(puml).toContain("endwhile");
+    });
+    test("while() с exitLabel", () => {
+        const puml = new plantuml_gost_1.ActivityBuilder()
+            .while("есть задачи", (b) => b.action("обработать"), "стоп")
+            .build();
+        expect(puml).toContain("endwhile (стоп)");
+    });
+    test("fork() генерирует fork/fork again/end fork", () => {
+        const puml = new plantuml_gost_1.ActivityBuilder()
+            .fork((b) => b.action("ветвь 1"), (b) => b.action("ветвь 2"))
+            .build();
+        expect(puml).toContain("fork");
+        expect(puml).toContain("fork again");
+        expect(puml).toContain("end fork");
+        expect(puml).toContain(":ветвь 1;");
+        expect(puml).toContain(":ветвь 2;");
+    });
+    test("partition() оборачивает в swimlane", () => {
+        const puml = new plantuml_gost_1.ActivityBuilder()
+            .partition("Сервер", (b) => b.action("обработать"))
+            .build();
+        expect(puml).toContain('partition "Сервер" {');
+        expect(puml).toContain("}");
+    });
+    test("note() добавляет заметку", () => {
+        const puml = new plantuml_gost_1.ActivityBuilder().note("важно", "left").build();
+        expect(puml).toContain("note left: важно");
+    });
+});
+// ── ComponentBuilder ───────────────────────────────────────────────────────────
+describe("ComponentBuilder", () => {
+    test("component() без alias", () => {
+        const puml = new plantuml_gost_1.ComponentBuilder().component("Frontend").build();
+        expect(puml).toContain("component [Frontend]");
+    });
+    test("component() с alias", () => {
+        const puml = new plantuml_gost_1.ComponentBuilder().component("Frontend", "FE").build();
+        expect(puml).toContain("component [Frontend] as FE");
+    });
+    test("interface() генерирует interface", () => {
+        const puml = new plantuml_gost_1.ComponentBuilder().interface("IService").build();
+        expect(puml).toContain('interface "IService"');
+    });
+    test("arrow() с label", () => {
+        const puml = new plantuml_gost_1.ComponentBuilder().arrow("FE", "BE", "HTTP").build();
+        expect(puml).toContain("FE --> BE : HTTP");
+    });
+    test("link() без label", () => {
+        const puml = new plantuml_gost_1.ComponentBuilder().link("A", "B").build();
+        expect(puml).toContain("A -- B");
+    });
+    test("package() оборачивает в package {...}", () => {
+        const puml = new plantuml_gost_1.ComponentBuilder()
+            .package("Система", (b) => b.component("Core"))
+            .build();
+        expect(puml).toContain('package "Система" {');
+        expect(puml).toContain("component [Core]");
+    });
+});
+// ── DeploymentBuilder ──────────────────────────────────────────────────────────
+describe("DeploymentBuilder", () => {
+    test("node() без вложения", () => {
+        const puml = new plantuml_gost_1.DeploymentBuilder().node("WebServer", "WS").build();
+        expect(puml).toContain('node "WebServer" as WS');
+    });
+    test("node() с вложением генерирует блок", () => {
+        const puml = new plantuml_gost_1.DeploymentBuilder()
+            .node("Server", undefined, (b) => b.component("App"))
+            .build();
+        expect(puml).toContain('node "Server" {');
+        expect(puml).toContain("component [App]");
+        expect(puml).toContain("}");
+    });
+    test("artifact() генерирует artifact", () => {
+        const puml = new plantuml_gost_1.DeploymentBuilder().artifact("app.jar").build();
+        expect(puml).toContain('artifact "app.jar"');
+    });
+    test("cloud() с вложением", () => {
+        const puml = new plantuml_gost_1.DeploymentBuilder()
+            .cloud("AWS", (b) => b.node("EC2"))
+            .build();
+        expect(puml).toContain('cloud "AWS" {');
+        expect(puml).toContain('node "EC2"');
+    });
+    test("arrow() и link()", () => {
+        const puml = new plantuml_gost_1.DeploymentBuilder().arrow("A", "B").link("B", "C").build();
+        expect(puml).toContain("A --> B");
+        expect(puml).toContain("B -- C");
+    });
+});
+// ── ObjectBuilder ──────────────────────────────────────────────────────────────
+describe("ObjectBuilder", () => {
+    test("object() без полей — простое имя", () => {
+        const puml = new plantuml_gost_1.ObjectBuilder().object("tram1").build();
+        expect(puml).toContain("object tram1");
+    });
+    test("object() с полями", () => {
+        const puml = new plantuml_gost_1.ObjectBuilder()
+            .object("tram1", undefined, { id: 1, state: '"working"' })
+            .build();
+        expect(puml).toContain("object tram1 {");
+        expect(puml).toContain("id = 1");
+        expect(puml).toContain('state = "working"');
+    });
+    test("object() с именем содержащим двоеточие — автоматически кавычки + alias", () => {
+        const puml = new plantuml_gost_1.ObjectBuilder()
+            .object("tram1 : Tram", "tram1")
+            .build();
+        expect(puml).toContain('object "tram1 : Tram" as tram1');
+    });
+    test("link() со стрелкой", () => {
+        const puml = new plantuml_gost_1.ObjectBuilder().link("A", "B", "has").build();
+        expect(puml).toContain("A --> B : has");
+    });
+});
+// ── ERBuilder ──────────────────────────────────────────────────────────────────
+describe("ERBuilder", () => {
+    test("entity() без обычных полей", () => {
+        const puml = new plantuml_gost_1.ERBuilder().entity("User", ["id : int <<PK>>"]).build();
+        expect(puml).toContain('entity "User" {');
+        expect(puml).toContain("* id : int <<PK>>");
+        expect(puml).not.toContain("--");
+    });
+    test("entity() с PK и обычными полями добавляет разделитель --", () => {
+        const puml = new plantuml_gost_1.ERBuilder()
+            .entity("User", ["id : int"], ["name : varchar"])
+            .build();
+        expect(puml).toContain("* id : int");
+        expect(puml).toContain("  --");
+        expect(puml).toContain("  name : varchar");
+    });
+    test("relation() с константами ER.*", () => {
+        const puml = new plantuml_gost_1.ERBuilder()
+            .relation("User", plantuml_gost_1.ER.ONE_TO_MANY, "Order", "places")
+            .build();
+        expect(puml).toContain("User ||--o{ Order : places");
+    });
+    test("relation() без label", () => {
+        const puml = new plantuml_gost_1.ERBuilder()
+            .relation("A", plantuml_gost_1.ER.MANY_TO_MANY, "B")
+            .build();
+        expect(puml).toContain("A }o--o{ B");
+    });
+    test("ER константы — корректный PlantUML синтаксис", () => {
+        expect(plantuml_gost_1.ER.ONE_TO_ONE).toBe("||--||");
+        expect(plantuml_gost_1.ER.ONE_TO_MANY).toBe("||--o{");
+        expect(plantuml_gost_1.ER.ONE_TO_MANY_REQ).toBe("||--|{");
+        expect(plantuml_gost_1.ER.OPT_TO_MANY).toBe("|o--o{");
+        expect(plantuml_gost_1.ER.MANY_TO_MANY).toBe("}o--o{");
+    });
+});
+// ── TimingBuilder ──────────────────────────────────────────────────────────────
+describe("TimingBuilder", () => {
+    test("concise() и robust() объявляют участников", () => {
+        const puml = new plantuml_gost_1.TimingBuilder()
+            .concise("User", "U")
+            .robust("System", "S")
+            .build();
+        expect(puml).toContain('concise "User" as U');
+        expect(puml).toContain('robust "System" as S');
+    });
+    test("at() устанавливает временну́ю точку", () => {
+        const puml = new plantuml_gost_1.TimingBuilder().at(100).build();
+        expect(puml).toContain("@100");
+    });
+    test("state() устанавливает состояние", () => {
+        const puml = new plantuml_gost_1.TimingBuilder().state("U", "Idle").build();
+        expect(puml).toContain("U is Idle");
+    });
+    test("arrow() генерирует сообщение", () => {
+        const puml = new plantuml_gost_1.TimingBuilder().arrow("U", "S", "запрос").build();
+        expect(puml).toContain("U -> S : запрос");
+    });
+    test("highlight() с label и цветом", () => {
+        const puml = new plantuml_gost_1.TimingBuilder().highlight(0, 100, "#Gold", "фаза 1").build();
+        expect(puml).toContain("highlight 0 to 100 #Gold : фаза 1");
+    });
+    test("highlight() без label", () => {
+        const puml = new plantuml_gost_1.TimingBuilder().highlight(0, 100).build();
+        expect(puml).toContain("highlight 0 to 100 #LightYellow");
+    });
+    test("clock() добавляет тактовый сигнал", () => {
+        const puml = new plantuml_gost_1.TimingBuilder().clock("CLK", 50).build();
+        expect(puml).toContain('clock "CLK" with period 50');
+    });
+});
+// ── MindMapBuilder ─────────────────────────────────────────────────────────────
+describe("MindMapBuilder", () => {
+    test("build() использует @startmindmap / @endmindmap", () => {
+        const puml = new plantuml_gost_1.MindMapBuilder().node(1, "Корень").build();
+        expect(puml).toMatch(/^@startmindmap/);
+        expect(puml).toMatch(/@endmindmap$/);
+    });
+    test("node(1) — корень со звёздочкой", () => {
+        const puml = new plantuml_gost_1.MindMapBuilder().node(1, "Root").build();
+        expect(puml).toContain("* Root");
+    });
+    test("node(2) — ветвь с двумя звёздочками", () => {
+        const puml = new plantuml_gost_1.MindMapBuilder().node(2, "Ветвь").build();
+        expect(puml).toContain("** Ветвь");
+    });
+    test("node(2, text, 'left') — левая ветвь с _", () => {
+        const puml = new plantuml_gost_1.MindMapBuilder().node(2, "Левая", "left").build();
+        expect(puml).toContain("**_ Левая");
+    });
+    test("build() НЕ содержит @startuml", () => {
+        const puml = new plantuml_gost_1.MindMapBuilder().build();
+        expect(puml).not.toContain("@startuml");
+    });
+});
+// ── GanttBuilder ───────────────────────────────────────────────────────────────
+describe("GanttBuilder", () => {
+    test("build() использует @startgantt / @endgantt", () => {
+        const puml = new plantuml_gost_1.GanttBuilder().task("T1", 5).build();
+        expect(puml).toMatch(/^@startgantt/);
+        expect(puml).toMatch(/@endgantt$/);
+    });
+    test("task() без startDay", () => {
+        const puml = new plantuml_gost_1.GanttBuilder().task("Разработка", 10).build();
+        expect(puml).toContain("[Разработка] lasts 10 days");
+    });
+    test("after() связывает задачи последовательно", () => {
+        const puml = new plantuml_gost_1.GanttBuilder().after("T2", "T1", 3).build();
+        expect(puml).toContain("[T2] starts at [T1]'s end and lasts 3 days");
+    });
+    test("milestone() привязывается к концу задачи", () => {
+        const puml = new plantuml_gost_1.GanttBuilder().milestone("Релиз", "T2").build();
+        expect(puml).toContain("[Релиз] happens at [T2]'s end");
+    });
+    test("section() добавляет раздел", () => {
+        const puml = new plantuml_gost_1.GanttBuilder().section("Фаза 1").build();
+        expect(puml).toContain("-- Фаза 1 --");
+    });
+    test("startDate() задаёт дату начала", () => {
+        const puml = new plantuml_gost_1.GanttBuilder().startDate("2026-01-01").build();
+        expect(puml).toContain("Project starts 2026-01-01");
+    });
+    test("build() НЕ содержит @startuml", () => {
+        const puml = new plantuml_gost_1.GanttBuilder().build();
+        expect(puml).not.toContain("@startuml");
+    });
+});
 //# sourceMappingURL=plantuml-builders.test.js.map
