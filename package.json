@@ -4,6 +4,7 @@
   "description": "GOST 7.32 document generation library for .docx and .xlsx — headings, tables, formulas, images, AHP matrices",
   "author": "magomed-cmd",
   "license": "MIT",
+  "type": "commonjs",
   "repository": {
     "type": "git",
     "url": "https://github.com/Magomed-cmd/gost.git"
@@ -11,6 +12,9 @@
   "homepage": "https://github.com/Magomed-cmd/gost#readme",
   "bugs": {
     "url": "https://github.com/Magomed-cmd/gost/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "gost",
@@ -32,20 +36,32 @@
   ],
   "exports": {
     "./docx": {
+      "types": "./dist/docx-gost.d.ts",
+      "import": "./dist/docx-gost.js",
       "require": "./dist/docx-gost.js",
-      "types": "./dist/docx-gost.d.ts"
+      "default": "./dist/docx-gost.js"
     },
     "./excel": {
+      "types": "./dist/excel-gost.d.ts",
+      "import": "./dist/excel-gost.js",
       "require": "./dist/excel-gost.js",
-      "types": "./dist/excel-gost.d.ts"
+      "default": "./dist/excel-gost.js"
     },
     "./plantuml": {
+      "types": "./dist/plantuml-gost.d.ts",
+      "import": "./dist/plantuml-gost.js",
       "require": "./dist/plantuml-gost.js",
-      "types": "./dist/plantuml-gost.d.ts"
-    }
+      "default": "./dist/plantuml-gost.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "docs",
+    "examples/docx/*.cjs",
+    "examples/plantuml/render-all.mjs",
+    "scripts/check-api-docs.mjs",
+    "scripts/check-docs.mjs",
     "README.md",
     "LICENSE"
   ],
@@ -53,19 +69,46 @@
     "node": ">=18"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "npm run clean && tsc",
     "build:watch": "tsc --watch",
-    "clean": "rm -rf dist",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "check:types": "tsc --project tsconfig.type-tests.json",
+    "check:docs": "node scripts/check-docs.mjs",
+    "check:api-docs": "node scripts/check-api-docs.mjs",
+    "check:examples": "node --check examples/docx/minimal.cjs && node --check examples/docx/full-report.cjs && node --check examples/plantuml/render-all.mjs",
+    "check:package": "node scripts/package-smoke.mjs",
+    "example:docx": "npm run build && node examples/docx/minimal.cjs",
+    "example:docx:full": "npm run build && node examples/docx/full-report.cjs",
+    "example:plantuml": "npm run build && node examples/plantuml/render-all.mjs",
+    "verify": "npm run build && npm test -- --runInBand && npm run check:types && npm run check:docs && npm run check:api-docs && npm run check:examples",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run verify && npm run check:package"
   },
   "dependencies": {
-    "docx": "^9.6.1",
+    "docx": "^9.7.1",
     "exceljs": "^4.4.0",
     "node-plantuml": "^0.9.0"
   },
+  "peerDependencies": {
+    "googleapis": ">=140"
+  },
+  "peerDependenciesMeta": {
+    "googleapis": {
+      "optional": true
+    }
+  },
+  "overrides": {
+    "brace-expansion@1.1.14": "1.1.18",
+    "brace-expansion@2.1.0": "2.1.4",
+    "brace-expansion@2.1.1": "2.1.4",
+    "tmp@0.2.5": "0.2.7",
+    "uuid@8.3.2": "11.1.1"
+  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "googleapis": "^173.0.0",
     "jest": "^30.4.2",
     "ts-jest": "^29.4.11",
     "typescript": "^5.4.0"

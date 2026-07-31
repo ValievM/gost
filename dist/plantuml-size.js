@@ -1,19 +1,45 @@
 "use strict";
-// Автоматическое определение размеров PNG и масштабирование под ширину контента.
-// Максимальная ширина контента ГОСТ A4 с полями библиотеки = 624px (9355 DXA).
+// Автоматическое определение отображаемых размеров PNG.
+// ImageRun использует 96 display px на дюйм независимо от DPI исходного PNG.
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.autoImageSize = autoImageSize;
 /**
  * Читает реальные размеры PNG из буфера (согласно PNG spec: bytes 16-20 = width, 20-24 = height)
- * и масштабирует пропорционально до maxWidth.
+ * и вычисляет размер отображения в DOCX.
+ *
+ * sourceDpi влияет только на естественный физический размер. Сам PNG не
+ * ресемплируется: Word получает исходный буфер и только меняет его размер
+ * отображения.
  */
-function autoImageSize(buffer, maxWidth = 624) {
+function autoImageSize(buffer, maxWidth = 624, sourceDpi = 96, fit = "natural") {
+    if (buffer.length < 24)
+        throw new Error("autoImageSize(): PNG buffer is too short.");
+    const pngSignature = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+    if (!pngSignature.every((byte, index) => buffer[index] === byte)) {
+        throw new Error("autoImageSize(): buffer is not a PNG.");
+    }
+    if (buffer.toString("ascii", 12, 16) !== "IHDR") {
+        throw new Error("autoImageSize(): PNG has no IHDR header.");
+    }
+    if (!Number.isFinite(maxWidth) || maxWidth <= 0) {
+        throw new Error("autoImageSize(): maxWidth must be a positive number.");
+    }
+    if (!Number.isFinite(sourceDpi) || sourceDpi <= 0) {
+        throw new Error("autoImageSize(): sourceDpi must be a positive number.");
+    }
+    if (fit !== "natural" && fit !== "content") {
+        throw new Error('autoImageSize(): fit must be "natural" or "content".');
+    }
     const w = buffer.readUInt32BE(16);
     const h = buffer.readUInt32BE(20);
-    const scale = maxWidth / w;
+    if (w === 0 || h === 0)
+        throw new Error("autoImageSize(): PNG dimensions must be positive.");
+    const naturalWidth = w * (96 / sourceDpi);
+    const width = fit === "content"
+        ? maxWidth
+        : Math.min(naturalWidth, maxWidth);
     return {
-        width: maxWidth,
-        height: Math.round(h * scale),
+        width: Math.round(width),
+        height: Math.round(h * (width / w)),
     };
 }
-//# sourceMappingURL=plantuml-size.js.map
