@@ -1,0 +1,6 @@
+src/
+coverage/
+node_modules/
+examples/**/out/
+.DS_Store
+*.tgz

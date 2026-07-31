@@ -46,6 +46,11 @@
   },
   "files": [
     "dist",
+    "docs",
+    "examples/docx/minimal.cjs",
+    "examples/plantuml/render-all.mjs",
+    "scripts/check-docs.mjs",
+    "AGENTS.md",
     "README.md",
     "LICENSE"
   ],
@@ -57,7 +62,12 @@
     "build:watch": "tsc --watch",
     "clean": "rm -rf dist",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "check:docs": "node scripts/check-docs.mjs",
+    "check:examples": "node --check examples/docx/minimal.cjs && node --check examples/plantuml/render-all.mjs",
+    "example:docx": "npm run build && node examples/docx/minimal.cjs",
+    "example:plantuml": "npm run build && node examples/plantuml/render-all.mjs",
+    "verify": "npm run build && npm test -- --runInBand && npm run check:docs && npm run check:examples"
   },
   "dependencies": {
     "docx": "^9.6.1",
