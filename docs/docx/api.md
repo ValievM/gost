@@ -32,6 +32,7 @@ TypeScript-типы экспортируются из того же entrypoint.
 ## Фабрика
 
 ```ts
+// check-docs
 declare function createDocxGost(options?: {
   style?: Partial<Omit<DocxStyleConfig, "PAGE" | "TABLE_CELL_MARGINS">> & {
     PAGE?: {
@@ -61,16 +62,21 @@ declare function createDocxGost(options?: {
 
 ## Методы экземпляра
 
+<!-- api-methods:start -->
+
 | Метод | Возвращает | Тема |
 | --- | --- | --- |
 | `run(text, opts?)` | `TextRun` | [контент](content.md) |
 | `paragraph(content, opts?)` | `Paragraph` | [контент](content.md) |
 | `centered(content, opts?)` | `Paragraph` | [контент](content.md) |
 | `paragraphWithMath(parts, opts?)` | `Paragraph` | [математика](tables-and-math.md) |
-| `h1/h2/h3(text, opts?)` | `Paragraph` | [контент](content.md) |
+| `h1(text, opts?)` | `Paragraph` | [контент](content.md) |
+| `h2(text, opts?)` | `Paragraph` | [контент](content.md) |
+| `h3(text, opts?)` | `Paragraph` | [контент](content.md) |
 | `blank(opts?)` | `Paragraph` | [контент](content.md) |
 | `pageBreak()` | `Paragraph` | [контент](content.md) |
-| `caption/tableCaption(text, opts?)` | `Paragraph` | [контент](content.md) |
+| `caption(text, opts?)` | `Paragraph` | [контент](content.md) |
+| `tableCaption(text, opts?)` | `Paragraph` | [контент](content.md) |
 | `createCaptionCounter(prefix, opts?)` | `CaptionCounter` | [контент](content.md) |
 | `placeholder(label, opts?)` | `Paragraph` | [изображения](images-and-diagrams.md) |
 | `imageBlock(...)` | `Paragraph` | [изображения](images-and-diagrams.md) |
@@ -88,6 +94,8 @@ declare function createDocxGost(options?: {
 | `saveDocument(doc, path)` | `Promise<void>` | [документ](document-and-styles.md) |
 | `diagramBlock(puml, counter, text, opts?)` | `Promise<Paragraph[]>` | [диаграммы](images-and-diagrams.md) |
 | `lint(children)` | `LintIssue[]` | [lint](lint.md) |
+
+<!-- api-methods:end -->
 
 Экземпляр также содержит readonly `style: DocxStyleConfig`.
 

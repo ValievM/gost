@@ -78,4 +78,3 @@ function placeholderImpl(st, label, opts = {}) {
         border: { top: border, bottom: border, left: border, right: border },
     }), "placeholder");
 }
-//# sourceMappingURL=paragraph.js.map

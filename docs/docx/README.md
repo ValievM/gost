@@ -73,4 +73,8 @@ main().catch((error) => {
 - [Документ и стили](document-and-styles.md)
 - [Lint](lint.md)
 
-Запускаемый пример: [examples/docx/minimal.cjs](../../examples/docx/minimal.cjs).
+Примеры:
+
+- [минимальный DOCX](../../examples/docx/minimal.cjs);
+- [полный эталонный отчёт](../../examples/docx/full-report.cjs);
+- [алгоритм генерации с AI](../ai-report-generation.md).

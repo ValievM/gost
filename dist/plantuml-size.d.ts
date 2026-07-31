@@ -12,4 +12,3 @@ export type ImageFit = "natural" | "content";
  * отображения.
  */
 export declare function autoImageSize(buffer: Buffer, maxWidth?: number, sourceDpi?: number, fit?: ImageFit): ImageSize;
-//# sourceMappingURL=plantuml-size.d.ts.map

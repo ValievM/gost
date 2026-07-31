@@ -49,4 +49,3 @@ export declare class GoogleSheetsAutoFitter implements IAutoFitter {
     postProcess(outputPath: string): Promise<void>;
     private resolveCredentials;
 }
-//# sourceMappingURL=google-sheets.d.ts.map

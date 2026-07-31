@@ -17,4 +17,3 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Backward-compatible re-export — public API unchanged.
 // Implementation has moved to src/docx/.
 __exportStar(require("./docx/index"), exports);
-//# sourceMappingURL=docx-gost.js.map

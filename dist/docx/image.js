@@ -41,4 +41,3 @@ function imageBlockImpl(st, src, widthOrOpts, height, opts = {}) {
         children: [new docx_1.ImageRun({ data, type: effectiveOpts.imageType ?? "png", transformation: { width: w, height: h } })],
     }), "image");
 }
-//# sourceMappingURL=image.js.map

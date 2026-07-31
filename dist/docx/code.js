@@ -24,4 +24,3 @@ function codeFileImpl(st, filePath, opts = {}) {
         lines.pop(); // файл заканчивается \n → убираем пустую строку
     return lines.map((line) => codeLineImpl(st, line, opts));
 }
-//# sourceMappingURL=code.js.map

@@ -19,4 +19,3 @@ export declare function wrapWithSkin(source: string, dpi?: number, opts?: Skinpa
  * Базовые skinparam добавляются автоматически через wrapWithSkin.
  */
 export declare function renderDiagram(source: string, opts?: RenderDiagramOpts & SkinparamOpts): Promise<Buffer>;
-//# sourceMappingURL=plantuml-render.d.ts.map

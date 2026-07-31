@@ -85,4 +85,3 @@ function createDocxGost(factoryOpts = {}) {
         },
     };
 }
-//# sourceMappingURL=index.js.map

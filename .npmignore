@@ -2,5 +2,6 @@ src/
 coverage/
 node_modules/
 examples/**/out/
+dist/**/*.map
 .DS_Store
 *.tgz

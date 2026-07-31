@@ -43,4 +43,3 @@ function autoImageSize(buffer, maxWidth = 624, sourceDpi = 96, fit = "natural") 
         height: Math.round(h * (width / w)),
     };
 }
-//# sourceMappingURL=plantuml-size.js.map

@@ -17,4 +17,3 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Backward-compatible re-export — public API unchanged.
 // Implementation has moved to src/excel/.
 __exportStar(require("./excel/index"), exports);
-//# sourceMappingURL=excel-gost.js.map

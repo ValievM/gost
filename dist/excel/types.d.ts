@@ -87,4 +87,3 @@ export interface ExcelGostInstance {
     weightedSumFormula(valueAddresses: string[], weightAddresses: string[]): string;
     listFormulaRange(sheetName: string, addresses: string[]): string;
 }
-//# sourceMappingURL=types.d.ts.map

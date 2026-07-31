@@ -57,6 +57,32 @@ BORDER_STYLE
 
 Экземпляр предоставляет готовые `HEADER_STYLE` и `RESULT_STYLE`.
 
+## Методы экземпляра
+
+<!-- api-methods:start -->
+
+| Метод | Назначение |
+| --- | --- |
+| `styleCell(cell, options?)` | применить стиль к ячейке |
+| `setValue(sheet, address, value, options?)` | записать значение |
+| `setFormula(sheet, address, formula, options?)` | записать формулу |
+| `applyBaseSheetSetup(sheet, widths)` | применить базовую настройку листа |
+| `mergeTitle(sheet, range, text)` | объединить и оформить заголовок |
+| `setFreeze(sheet, ySplit, activeCell?)` | закрепить строки |
+| `applyZebraStriping(sheet, startRow, endRow, startCol, endCol, headerRows?)` | применить чередование строк |
+| `getCellText(cell)` | получить отображаемый текст |
+| `autoFitSheet(sheet)` | выполнить локальный этап autofit |
+| `autoFitAfterSave(outputPath)` | выполнить post-process после сохранения |
+| `formatTableRange(sheet, startRow, endRow, startCol, endCol, headerRow)` | оформить диапазон таблицы |
+| `addAhpMatrixBlock(sheet, startRow, title, labels, matrix, randomIndex)` | добавить блок МАИ |
+| `addContentsSheet(workbook, sheetNames)` | создать лист содержания |
+| `productFormula(addresses, exponent)` | построить формулу произведения |
+| `absoluteRef(address)` | сделать абсолютную ссылку |
+| `weightedSumFormula(valueAddresses, weightAddresses)` | построить формулу взвешенной суммы |
+| `listFormulaRange(sheetName, addresses)` | построить диапазон для списка |
+
+<!-- api-methods:end -->
+
 ## Ячейки
 
 ```ts
@@ -98,6 +124,7 @@ addContentsSheet(workbook, sheetNames): Worksheet
 Интерфейс стратегии:
 
 ```ts
+// check-docs
 interface IAutoFitter {
   fitSheet(sheet, style): void;
   postProcess?(outputPath: string): Promise<void>;

@@ -21,6 +21,7 @@ if (issues.some((issue) => issue.level === "warn")) {
 Метод печатает результат и возвращает `LintIssue[]`:
 
 ```ts
+// check-docs
 interface LintIssue {
   level: "warn" | "info";
   index: number;

@@ -128,4 +128,3 @@ function appendixImpl(st, letter, title, kind) {
     result.push((0, paragraph_1.centeredImpl)(st, title, { bold: true, before: 0, after: 120 }));
     return result;
 }
-//# sourceMappingURL=heading.js.map

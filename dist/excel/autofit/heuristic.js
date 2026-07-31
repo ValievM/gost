@@ -77,4 +77,3 @@ class HeuristicAutoFitter {
     }
 }
 exports.HeuristicAutoFitter = HeuristicAutoFitter;
-//# sourceMappingURL=heuristic.js.map

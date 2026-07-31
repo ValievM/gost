@@ -1,6 +1,6 @@
 import { Math as DocxMath, MathCurlyBrackets, MathFraction, MathIntegral, MathRadical, MathRoundBrackets, MathSquareBrackets, MathSubScript, MathSubSuperScript, MathSum, MathSuperScript, Paragraph } from "docx";
-import type { DocxStyleConfig, MathComponent, ParagraphOpts, RunDescriptor } from "./types";
-export declare function isMathLike(value: unknown): value is MathComponent;
+import type { DocxStyleConfig, MathComponent, MathContent, ParagraphOpts, RunDescriptor } from "./types";
+export declare function isMathLike(value: unknown): value is MathContent;
 export declare function toMathComponents(value: unknown): MathComponent[];
 export declare function mathExpr(...parts: unknown[]): DocxMath;
 export declare function mathFraction(numerator: unknown, denominator: unknown): MathFraction;
@@ -19,7 +19,6 @@ export declare function mathIntegral(content: unknown, opts?: {
     subScript?: unknown;
     superScript?: unknown;
 }): MathIntegral;
-export declare function paragraphWithMathImpl(st: DocxStyleConfig, parts: Array<string | number | RunDescriptor | MathComponent>, opts?: ParagraphOpts): Paragraph;
+export declare function paragraphWithMathImpl(st: DocxStyleConfig, parts: Array<string | number | RunDescriptor | MathContent>, opts?: ParagraphOpts): Paragraph;
 export declare function formulaMathImpl(st: DocxStyleConfig, content: unknown, opts?: ParagraphOpts): Paragraph;
 export declare function formulaInlineImpl(st: DocxStyleConfig, label: string, mathContent: unknown, opts?: ParagraphOpts): Paragraph;
-//# sourceMappingURL=math.d.ts.map

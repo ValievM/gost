@@ -217,4 +217,3 @@ function printLintResults(issues) {
         parts.push(`${infos.length} замечаний`);
     console.log(`\nlintChildren: ${parts.join(", ")}.`);
 }
-//# sourceMappingURL=lint.js.map

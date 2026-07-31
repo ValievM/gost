@@ -116,4 +116,3 @@ class GoogleSheetsAutoFitter {
     }
 }
 exports.GoogleSheetsAutoFitter = GoogleSheetsAutoFitter;
-//# sourceMappingURL=google-sheets.js.map

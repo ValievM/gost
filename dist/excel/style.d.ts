@@ -9,4 +9,3 @@ export declare function setValueImpl(sheet: ExcelJS.Worksheet, address: string, 
 export declare function setFormulaImpl(sheet: ExcelJS.Worksheet, address: string, formula: string, options: CellStyleOptions, st: ExcelStyleConfig): ExcelJS.Cell;
 /** Extracts plain text from a cell (returns "" for formula cells — no cached value in ExcelJS). */
 export declare function getCellTextImpl(cell: ExcelJS.Cell): string;
-//# sourceMappingURL=style.d.ts.map

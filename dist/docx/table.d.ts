@@ -6,4 +6,3 @@ export declare function tableCellImpl(st: DocxStyleConfig, cell: CellValue, widt
     bold?: boolean;
 }): TableCell;
 export declare function makeTableImpl(st: DocxStyleConfig, rows: CellValue[][], opts?: TableOpts): Table;
-//# sourceMappingURL=table.d.ts.map

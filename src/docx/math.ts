@@ -14,10 +14,10 @@ import {
   MathSuperScript,
   Paragraph,
 } from "docx";
-import type { DocxStyleConfig, MathComponent, ParagraphChild, ParagraphOpts, RunDescriptor } from "./types";
+import type { DocxStyleConfig, MathComponent, MathContent, ParagraphChild, ParagraphOpts, RunDescriptor } from "./types";
 import { runImpl, paragraphOptions } from "./paragraph";
 
-export function isMathLike(value: unknown): value is MathComponent {
+export function isMathLike(value: unknown): value is MathContent {
   return value instanceof DocxMath
     || (typeof value === "object" && value !== null && (value as Record<string, unknown>).constructor.name.startsWith("Math"));
 }
@@ -85,7 +85,7 @@ export function mathIntegral(content: unknown, opts: { subScript?: unknown; supe
   });
 }
 
-export function paragraphWithMathImpl(st: DocxStyleConfig, parts: Array<string | number | RunDescriptor | MathComponent>, opts: ParagraphOpts = {}): Paragraph {
+export function paragraphWithMathImpl(st: DocxStyleConfig, parts: Array<string | number | RunDescriptor | MathContent>, opts: ParagraphOpts = {}): Paragraph {
   const children = parts.map((part): ParagraphChild => {
     if (typeof part === "string" || typeof part === "number") return runImpl(st, part, opts);
     if (part instanceof DocxMath) return part;

@@ -257,4 +257,3 @@ export declare class GanttBuilder extends DiagramBuilder {
 export declare function createPlantUmlGost(opts?: PlantUmlGostOptions): PlantUmlGostInstance;
 export { autoImageSize } from "./plantuml-size";
 export { renderDiagram, wrapWithSkin } from "./plantuml-render";
-//# sourceMappingURL=plantuml-gost.d.ts.map

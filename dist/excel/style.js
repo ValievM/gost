@@ -81,4 +81,3 @@ function getCellTextImpl(cell) {
         return String(cell.value.text);
     return String(cell.text || cell.value);
 }
-//# sourceMappingURL=style.js.map

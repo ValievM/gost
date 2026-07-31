@@ -30,6 +30,7 @@ PlantUML-диаграммы. Текущий титульный шаблон не
 
 Для DOCX:
 
+- генерация готового отчёта — `docs/ai-report-generation.md`;
 - модель и маршрут — `docs/docx/README.md`;
 - сигнатуры — `docs/docx/api.md`;
 - текст, списки, код, приложения — `docs/docx/content.md`;
@@ -39,6 +40,9 @@ PlantUML-диаграммы. Текущий титульный шаблон не
 - lint — `docs/docx/lint.md`.
 
 Не загружать все документы без необходимости.
+
+Для полного отчёта использовать `examples/docx/full-report.cjs` как
+канонический шаблон; `examples/docx/minimal.cjs` — только для быстрого старта.
 
 ## Архитектура
 

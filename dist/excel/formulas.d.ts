@@ -7,4 +7,3 @@ export declare function absoluteRef(address: string): string;
 export declare function weightedSumFormula(valueAddresses: string[], weightAddresses: string[]): string;
 /** Builds a comma-separated list of cross-sheet references for use in formulas */
 export declare function listFormulaRange(sheetName: string, addresses: string[]): string;
-//# sourceMappingURL=formulas.d.ts.map

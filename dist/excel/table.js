@@ -42,4 +42,3 @@ function formatTableRangeImpl(sheet, startRow, endRow, startCol, endCol, headerR
         }
     }
 }
-//# sourceMappingURL=table.js.map

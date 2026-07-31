@@ -493,4 +493,3 @@ Object.defineProperty(exports, "autoImageSize", { enumerable: true, get: functio
 var plantuml_render_2 = require("./plantuml-render");
 Object.defineProperty(exports, "renderDiagram", { enumerable: true, get: function () { return plantuml_render_2.renderDiagram; } });
 Object.defineProperty(exports, "wrapWithSkin", { enumerable: true, get: function () { return plantuml_render_2.wrapWithSkin; } });
-//# sourceMappingURL=plantuml-gost.js.map

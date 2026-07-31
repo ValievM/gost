@@ -22,4 +22,3 @@ export declare function centeredImpl(st: DocxStyleConfig, content: Content, opts
 export declare function blankImpl(st: DocxStyleConfig, opts?: ParagraphOpts): Paragraph;
 export declare function pageBreakImpl(): Paragraph;
 export declare function placeholderImpl(st: DocxStyleConfig, label: string, opts?: ParagraphOpts): Paragraph;
-//# sourceMappingURL=paragraph.d.ts.map

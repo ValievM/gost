@@ -24,4 +24,3 @@ function weightedSumFormula(valueAddresses, weightAddresses) {
 function listFormulaRange(sheetName, addresses) {
     return addresses.map((address) => `'${sheetName}'!${address}`).join(",");
 }
-//# sourceMappingURL=formulas.js.map

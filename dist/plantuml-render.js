@@ -45,4 +45,3 @@ async function renderDiagram(source, opts = {}) {
     const gen = plantuml.generate(wrapped, { format });
     return streamToBuffer(gen.out);
 }
-//# sourceMappingURL=plantuml-render.js.map

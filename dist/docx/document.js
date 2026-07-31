@@ -113,4 +113,3 @@ async function diagramBlockImpl(st, pumlSource, counter, captionText, opts = {})
         counter.caption(captionText),
     ];
 }
-//# sourceMappingURL=document.js.map

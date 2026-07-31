@@ -110,4 +110,3 @@ function formulaMathImpl(st, content, opts = {}) {
 function formulaInlineImpl(st, label, mathContent, opts = {}) {
     return new docx_1.Paragraph((0, paragraph_1.paragraphOptions)(st, opts, [(0, paragraph_1.runImpl)(st, `${label} `, opts), mathExpr(mathContent)]));
 }
-//# sourceMappingURL=math.js.map

@@ -22,6 +22,7 @@ void image;
 Сигнатура:
 
 ```ts
+// check-docs
 interface DocxGostInstance {
   imageBlock(
     src: string | Buffer,

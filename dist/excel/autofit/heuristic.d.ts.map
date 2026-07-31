@@ -1,1 +1,0 @@
-{"version":3,"file":"heuristic.d.ts","sourceRoot":"","sources":["../../../src/excel/autofit/heuristic.ts"],"names":[],"mappings":"AAAA,OAAO,OAAO,MAAM,SAAS,CAAC;AAC9B,OAAO,KAAK,EAAE,gBAAgB,EAAE,WAAW,EAAE,MAAM,UAAU,CAAC;AAwB9D;;;;;;;;GAQG;AACH,qBAAa,mBAAoB,YAAW,WAAW;IACnD,QAAQ,CAAC,KAAK,EAAE,OAAO,CAAC,SAAS,EAAE,EAAE,EAAE,gBAAgB,GAAG,IAAI;CAiDjE"}

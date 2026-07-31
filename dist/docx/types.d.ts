@@ -1,4 +1,5 @@
 import { AlignmentType, BorderStyle, Document, Footer, Paragraph, Table, TextRun, TabStopType, Math as DocxMath } from "docx";
+import type { MathComponent as DocxMathComponent } from "docx";
 import type { LintIssue } from "../lint";
 import type { ImageFit } from "../plantuml-size";
 export type DocxBorder = {
@@ -16,7 +17,10 @@ export type TabStop = {
     type: (typeof TabStopType)[keyof typeof TabStopType];
     position: number;
 };
-export type MathComponent = any;
+/** Низкоуровневый компонент Office Math из `docx`. */
+export type MathComponent = DocxMathComponent;
+/** Компонент Office Math или уже собранное выражение `docx.Math`. */
+export type MathContent = MathComponent | DocxMath;
 export type ParagraphChild = TextRun | DocxMath;
 export interface DocxStyleConfig {
     FONT: string;
@@ -129,7 +133,7 @@ export interface CaptionCounter {
     caption: (text: string) => Paragraph;
 }
 export interface CellDescriptor {
-    text: CellValue | CellValue[];
+    text: CellContent;
     align?: (typeof AlignmentType)[keyof typeof AlignmentType] | string;
     bold?: boolean;
     italics?: boolean;
@@ -140,7 +144,9 @@ export interface CellDescriptor {
     rowspan?: number;
     shading?: object;
 }
-export type CellValue = string | number | CellDescriptor | MathComponent;
+/** Содержимое ячейки: одно значение либо последовательность text/math-фрагментов. */
+export type CellContent = string | number | MathContent | Array<string | number | RunDescriptor | MathContent>;
+export type CellValue = string | number | CellDescriptor | MathContent;
 export interface TitlePageOpts {
     workType: string;
     subtitle?: string | string[];
@@ -165,7 +171,7 @@ export interface DocxGostInstance {
     run(text: string | number, opts?: ParagraphOpts): TextRun;
     paragraph(content: Content, opts?: ParagraphOpts): Paragraph;
     centered(content: Content, opts?: ParagraphOpts): Paragraph;
-    paragraphWithMath(parts: Array<string | number | RunDescriptor | MathComponent>, opts?: ParagraphOpts): Paragraph;
+    paragraphWithMath(parts: Array<string | number | RunDescriptor | MathContent>, opts?: ParagraphOpts): Paragraph;
     h1(text: string, opts?: ParagraphOpts): Paragraph;
     h2(text: string, opts?: ParagraphOpts): Paragraph;
     h3(text: string, opts?: ParagraphOpts): Paragraph;
@@ -200,7 +206,7 @@ export interface DocxGostInstance {
     formulaInline(label: string, mathContent: unknown, opts?: ParagraphOpts): Paragraph;
     makeTable(rows: CellValue[][], opts?: TableOpts): Table;
     makeTitlePage(opts: TitlePageOpts): DocxSection;
-    makeContentSection(children: Array<Paragraph | Table>, opts?: object): DocxSection;
+    makeContentSection(children: Array<Paragraph | Table>): DocxSection;
     makeDocument(sections: DocxSection[], opts?: {
         styles?: object;
     }): Document;
@@ -253,4 +259,3 @@ export interface DiagramBlockOpts {
     /** Переопределение skinparam */
     skinparams?: Record<string, string>;
 }
-//# sourceMappingURL=types.d.ts.map

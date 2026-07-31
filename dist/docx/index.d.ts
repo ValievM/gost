@@ -6,4 +6,3 @@ export { toMathComponents, mathExpr, mathFraction, mathSub, mathSup, mathSubSup,
 export { TableOfContents };
 export { lintChildren, printLintResults } from "../lint";
 export declare function createDocxGost(factoryOpts?: DocxGostOptions): DocxGostInstance;
-//# sourceMappingURL=index.d.ts.map

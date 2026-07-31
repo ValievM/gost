@@ -20,6 +20,8 @@ createPlantUmlGost(options?: { dpi?: number }): PlantUmlGostInstance
 
 Методы экземпляра:
 
+<!-- api-methods:start -->
+
 | Метод | Результат |
 | --- | --- |
 | `useCaseDiagram()` | `UseCaseBuilder` |
@@ -36,6 +38,8 @@ createPlantUmlGost(options?: { dpi?: number }): PlantUmlGostInstance
 | `ganttChart()` | `GanttBuilder` |
 | `render(source, options?)` | `Promise<Buffer>` |
 | `autoImageSize(png, maxWidth?, sourceDpi?, fit?)` | `{ width, height }`; `sourceDpi` по умолчанию равен DPI фабрики |
+
+<!-- api-methods:end -->
 
 ## Общие методы builders
 

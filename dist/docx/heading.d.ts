@@ -57,4 +57,3 @@ export declare function listImpl(st: DocxStyleConfig, items: string[], type: Lis
  * @param kind   - "(обязательное)" или "(справочное)"
  */
 export declare function appendixImpl(st: DocxStyleConfig, letter: string, title: string, kind?: "обязательное" | "справочное"): Paragraph[];
-//# sourceMappingURL=heading.d.ts.map

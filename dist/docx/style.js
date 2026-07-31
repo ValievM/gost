@@ -87,4 +87,3 @@ function createDocxStyle(opts = {}) {
             .map((stop) => ({ ...stop })),
     };
 }
-//# sourceMappingURL=style.js.map

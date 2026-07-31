@@ -114,4 +114,3 @@ function makeTableImpl(st, rows, opts = {}) {
         }),
     });
 }
-//# sourceMappingURL=table.js.map

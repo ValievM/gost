@@ -1,5 +1,5 @@
 import { AlignmentType, Paragraph, Table, TableCell, TableRow, VerticalAlign, WidthType } from "docx";
-import type { DocxStyleConfig, TableOpts, CellValue, CellDescriptor, MathComponent, RunDescriptor } from "./types";
+import type { DocxStyleConfig, TableOpts, CellValue, CellDescriptor, MathContent, RunDescriptor } from "./types";
 import { runImpl } from "./paragraph";
 import { paragraphWithMathImpl, isMathLike } from "./math";
 
@@ -38,7 +38,7 @@ function cellColumnSpan(cell: CellValue): number {
 }
 
 function rowColumnCount(row: CellValue[]): number {
-  return row.reduce((count, cell) => count + cellColumnSpan(cell), 0);
+  return row.reduce<number>((count, cell) => count + cellColumnSpan(cell), 0);
 }
 
 export function tableCellImpl(st: DocxStyleConfig, cell: CellValue, width: number, opts: TableOpts & { bold?: boolean }): TableCell {
@@ -47,7 +47,7 @@ export function tableCellImpl(st: DocxStyleConfig, cell: CellValue, width: numbe
   const align = normalized.align ?? opts.align;
   const bold = normalized.bold !== undefined ? normalized.bold : opts.bold;
   const children = Array.isArray(content) || isMathLike(content)
-    ? [paragraphWithMathImpl(st, Array.isArray(content) ? content as Array<string | number | RunDescriptor | MathComponent> : [content], {
+    ? [paragraphWithMathImpl(st, Array.isArray(content) ? content as Array<string | number | RunDescriptor | MathContent> : [content], {
       align,
       noIndent: true,
       line: opts.cellLine ?? st.TABLE_CELL_LINE,

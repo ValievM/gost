@@ -9,4 +9,3 @@ import type { IAutoFitter } from "../types";
 export declare class NullAutoFitter implements IAutoFitter {
     fitSheet(): void;
 }
-//# sourceMappingURL=null.d.ts.map

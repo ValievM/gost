@@ -25,4 +25,3 @@ export declare function lintChildren(children: Array<Paragraph | Table>): LintIs
  * Вызывать перед saveDocument.
  */
 export declare function printLintResults(issues: LintIssue[]): void;
-//# sourceMappingURL=lint.d.ts.map

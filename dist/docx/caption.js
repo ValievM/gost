@@ -32,4 +32,3 @@ function createCaptionCounterImpl(st, prefix, opts = {}) {
         caption: (text) => fn(st, `${prefix} ${n++} – ${text}`, opts),
     };
 }
-//# sourceMappingURL=caption.js.map

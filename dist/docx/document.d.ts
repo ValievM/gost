@@ -7,4 +7,3 @@ export declare function makeDocumentImpl(st: DocxStyleConfig, sections: DocxSect
 }): Document;
 export declare function saveDocumentImpl(doc: Document, outputPath: string): Promise<void>;
 export declare function diagramBlockImpl(st: DocxStyleConfig, pumlSource: string, counter: CaptionCounter, captionText: string, opts?: DiagramBlockOpts): Promise<Paragraph[]>;
-//# sourceMappingURL=document.d.ts.map

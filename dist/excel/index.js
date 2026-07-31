@@ -69,4 +69,3 @@ function createExcelGost(opts = {}) {
         listFormulaRange: formulas_1.listFormulaRange,
     };
 }
-//# sourceMappingURL=index.js.map

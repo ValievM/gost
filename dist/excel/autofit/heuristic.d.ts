@@ -12,4 +12,3 @@ import type { ExcelStyleConfig, IAutoFitter } from "../types";
 export declare class HeuristicAutoFitter implements IAutoFitter {
     fitSheet(sheet: ExcelJS.Worksheet, st: ExcelStyleConfig): void;
 }
-//# sourceMappingURL=heuristic.d.ts.map

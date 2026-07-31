@@ -6,4 +6,3 @@ export { NullAutoFitter } from "./autofit/null";
 export { GoogleSheetsAutoFitter } from "./autofit/google-sheets";
 export type { GoogleSheetsAutoFitterOptions } from "./autofit/google-sheets";
 export declare function createExcelGost(opts?: ExcelGostOptions): ExcelGostInstance;
-//# sourceMappingURL=index.d.ts.map

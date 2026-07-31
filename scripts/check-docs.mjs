@@ -2,12 +2,20 @@ import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
 import { fileURLToPath } from "node:url";
+import ts from "typescript";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const markdownFiles = [
-  path.join(ROOT, "README.md"),
-  path.join(ROOT, "AGENTS.md"),
-];
+  "README.md",
+  "AGENTS.md",
+  "CLAUDE.md",
+  "CHANGELOG.md",
+  "CONTRIBUTING.md",
+  "RELEASING.md",
+  "SECURITY.md",
+]
+  .map((name) => path.join(ROOT, name))
+  .filter(fs.existsSync);
 
 function collectMarkdown(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -41,7 +49,9 @@ for (const filePath of markdownFiles) {
 
   const lines = source.split(/\r?\n/);
   for (let index = 0; index < lines.length; index++) {
-    if (!/^```(?:js|javascript|cjs)\s*$/.test(lines[index])) continue;
+    const fence = lines[index].match(/^```(js|javascript|cjs|ts|typescript|mts|cts)\s*$/);
+    if (!fence) continue;
+    const language = fence[1];
     const startLine = index + 2;
     const block = [];
     index++;
@@ -53,10 +63,33 @@ for (const filePath of markdownFiles) {
       failures.push(`${relativeFile}:${startLine}: unclosed JavaScript fence`);
       break;
     }
-    try {
-      new vm.Script(block.join("\n"), { filename: `${relativeFile}:${startLine}` });
-    } catch (error) {
-      failures.push(error instanceof Error ? error.message : String(error));
+    const code = block.join("\n");
+    if (language === "js" || language === "javascript" || language === "cjs") {
+      try {
+        new vm.Script(code, { filename: `${relativeFile}:${startLine}` });
+      } catch (error) {
+        failures.push(error instanceof Error ? error.message : String(error));
+      }
+      continue;
+    }
+
+    const firstCodeLine = block.find((line) => line.trim().length > 0)?.trim();
+    if (firstCodeLine !== "// check-docs") continue;
+
+    const checkedCode = block.filter((line) => line.trim() !== "// check-docs").join("\n");
+    const result = ts.transpileModule(checkedCode, {
+      compilerOptions: {
+        module: ts.ModuleKind.NodeNext,
+        moduleResolution: ts.ModuleResolutionKind.NodeNext,
+        target: ts.ScriptTarget.ES2020,
+      },
+      fileName: `${relativeFile}:${startLine}.${language === "typescript" ? "ts" : language}`,
+      reportDiagnostics: true,
+    });
+    for (const diagnostic of result.diagnostics ?? []) {
+      if (diagnostic.category !== ts.DiagnosticCategory.Error) continue;
+      const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
+      failures.push(`${relativeFile}:${startLine}: ${message}`);
     }
   }
 }

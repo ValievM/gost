@@ -16,4 +16,3 @@ function colLetter(zeroBasedIndex) {
     }
     return result;
 }
-//# sourceMappingURL=utils.js.map

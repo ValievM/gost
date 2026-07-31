@@ -9,14 +9,23 @@
 `makeTitlePage()` рассчитан именно на ИТА ЮФУ: название организации и город
 зашиты в текущий шаблон. Для другого учебного заведения нужен отдельный шаблон.
 
+Если отчёт генерирует AI: [маршрут и критерии готовности](docs/ai-report-generation.md).
+
 ## Установка
+
+В проект отчёта напрямую из GitHub:
+
+```bash
+npm install github:Magomed-cmd/gost
+```
+
+Для разработки библиотеки:
 
 ```bash
 git clone https://github.com/Magomed-cmd/gost.git
 cd gost
 npm ci
-npm run build
-npm test
+npm run verify
 ```
 
 Подключение собранной локальной копии в соседний проект:
@@ -32,7 +41,7 @@ const { createDocxGost } = require("@magomed-cmd/gost/docx");
 const { createPlantUmlGost } = require("@magomed-cmd/gost/plantuml");
 ```
 
-Node.js 18+; пакет использует CommonJS.
+Поддерживаются `require()` и ESM `import`; Node.js 18+.
 
 ## DOCX: рабочий минимум
 
@@ -91,6 +100,9 @@ main().catch((error) => {
 ```
 
 Файл без внешних ресурсов: [examples/docx/minimal.cjs](examples/docx/minimal.cjs).
+Полный эталон с таблицей, формулой, PlantUML, кодом и приложением:
+[examples/docx/full-report.cjs](examples/docx/full-report.cjs). Для его запуска
+нужна Java.
 
 Логическая цепочка DOCX:
 
@@ -155,17 +167,18 @@ main().catch((error) => {
 ## Документация
 
 - [Карта документации](docs/INDEX.md)
+- [Генерация DOCX с AI](docs/ai-report-generation.md)
 - [DOCX](docs/docx/README.md)
 - [PlantUML](docs/plantuml/quickstart.md)
 - [Excel](docs/excel/quickstart.md)
 - [Правила для AI-агентов](AGENTS.md)
+- [Маршрут для Claude](CLAUDE.md)
 
 ## Проверка
 
 ```bash
-npm run build
-npm test
-npm run check:docs
+npm run verify
+npm run check:package
 ```
 
 Линтер DOCX — структурный preflight, а не проверка фактической пагинации Word
